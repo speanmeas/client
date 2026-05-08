@@ -5,13 +5,13 @@ import paramiko
 from tqdm import tqdm
 
 
-# read pubspec.yaml
+#! read pubspec.yaml
 content = ""
 with open("pubspec.yaml", "r", encoding="utf-8") as f:
     content = f.read()
 
 
-# find the current build number
+#! find the current build number
 build_match = re.search(r"version: (\d+).(\d+).(\d+)\+(\d+)", content)
 if build_match:
 
@@ -41,27 +41,26 @@ if build_match:
         f.write(new_content)
 
 
-# clean
+#! clean
 # os.system("flutter clean")
 
 # build web release
 # os.system("flutter build web --release --base-href /")
-
-# build for cloudflare
-os.system("flutter build web --release --base-href / --output=build/cloudflare")
-
-# build for github
-os.system(f"flutter build web --release --base-href /{os.path.basename(os.getcwd())}/ --output=build/github")
-
 # os.system("flutter build web --release --base-href /app/ --output=build/github")
 
+#! build for cloudflare
+os.system("flutter build web --release --base-href / --output=build/cloudflare")
 
-# delay for 10 seconds
-# for _ in tqdm(range(100)):
-#     time.sleep(0.1)
+#! build for github
+os.system(f"flutter build web --release --base-href /{os.path.basename(os.getcwd())}/ --output=build/github")
 
 
-# git commit and push
-# os.system("git add .")
-# os.system(f'git commit -m "update"')
-# os.system("git push")
+#! delay for 10 seconds
+for _ in tqdm(range(100)):
+    time.sleep(0.1)
+
+
+#! git commit and push
+os.system("git add .")
+os.system(f'git commit -m "update"')
+os.system("git push")
