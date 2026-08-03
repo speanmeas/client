@@ -9,11 +9,15 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   final _formKey = GlobalKey<FormState>();
-  final _nameFocusNode = FocusNode();
+  final _firstNameFocusNode = FocusNode();
+  final _lastNameFocusNode = FocusNode();
+  final _phoneFocusNode = FocusNode();
   final _emailFocusNode = FocusNode();
   final _passwordFocusNode = FocusNode();
   final _confirmFocusNode = FocusNode();
-  final _nameController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmController = TextEditingController();
@@ -23,11 +27,15 @@ class _SignUpState extends State<SignUp> {
 
   @override
   void dispose() {
-    _nameFocusNode.dispose();
+    _firstNameFocusNode.dispose();
+    _lastNameFocusNode.dispose();
+    _phoneFocusNode.dispose();
     _emailFocusNode.dispose();
     _passwordFocusNode.dispose();
     _confirmFocusNode.dispose();
-    _nameController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _phoneController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmController.dispose();
@@ -62,11 +70,11 @@ class _SignUpState extends State<SignUp> {
     return Scaffold(
       appBar: AppBar(title: const Text('Create account')),
       body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 420),
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 420),
               child: Form(
                 key: _formKey,
                 child: Column(
@@ -81,17 +89,63 @@ class _SignUpState extends State<SignUp> {
                     ),
                     const SizedBox(height: 24),
                     TextFormField(
-                      focusNode: _nameFocusNode,
-                      controller: _nameController,
+                      focusNode: _firstNameFocusNode,
+                      controller: _firstNameController,
                       textInputAction: TextInputAction.next,
                       decoration: const InputDecoration(
-                        labelText: 'Full name',
+                        labelText: 'First name',
                         prefixIcon: Icon(Icons.person_outline),
                         border: OutlineInputBorder(),
                       ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Enter your full name';
+                          return 'Enter your first name';
+                        }
+                        return null;
+                      },
+                      onFieldSubmitted: (_) =>
+                          _focusNextField(_lastNameFocusNode),
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      focusNode: _lastNameFocusNode,
+                      controller: _lastNameController,
+                      textInputAction: TextInputAction.next,
+                      decoration: const InputDecoration(
+                        labelText: 'Last name',
+                        prefixIcon: Icon(Icons.person_outline),
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Enter your last name';
+                        }
+                        return null;
+                      },
+                      onFieldSubmitted: (_) => _focusNextField(_phoneFocusNode),
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      focusNode: _phoneFocusNode,
+                      controller: _phoneController,
+                      keyboardType: TextInputType.phone,
+                      textInputAction: TextInputAction.next,
+                      decoration: const InputDecoration(
+                        labelText: 'Phone number',
+                        prefixIcon: Icon(Icons.phone_outlined),
+                        border: OutlineInputBorder(),
+                        hintText: '0xxxxxxxx',
+                      ),
+                      validator: (value) {
+                        final phone = value?.trim() ?? '';
+                        if (phone.isEmpty) {
+                          return 'Enter your phone number';
+                        }
+                        if (!RegExp(r'^[0-9]+$').hasMatch(phone)) {
+                          return 'Digits only';
+                        }
+                        if (phone.length < 8) {
+                          return 'Must be at least 8 digits';
                         }
                         return null;
                       },
