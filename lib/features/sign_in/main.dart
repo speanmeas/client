@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import '../auth/auth_service.dart';
+import '../auth/main.dart';
 
-class SignIn extends StatefulWidget {
-  const SignIn({super.key});
+class Main_ extends StatefulWidget {
+  const Main_({super.key});
 
   @override
-  State<SignIn> createState() => _SignInState();
+  State<Main_> createState() => _Main_State();
 }
 
-class _SignInState extends State<SignIn> {
+class _Main_State extends State<Main_> {
   final _formKey = GlobalKey<FormState>();
   final _emailFocusNode = FocusNode();
   final _passwordFocusNode = FocusNode();
@@ -33,10 +33,7 @@ class _SignInState extends State<SignIn> {
     setState(() => _isLoading = true);
 
     try {
-      final result = await AuthService.signin(
-        username: _emailController.text.trim(),
-        password: _passwordController.text,
-      );
+      final result = await AuthService.signin(username: _emailController.text.trim(), password: _passwordController.text);
 
       if (!mounted) return;
 
@@ -45,9 +42,7 @@ class _SignInState extends State<SignIn> {
       Navigator.of(context).pushReplacementNamed('/application');
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(_friendlyError(e))));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(_friendlyError(e))));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -77,23 +72,13 @@ class _SignInState extends State<SignIn> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Text(
-                      'Welcome back',
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                    const Text('Welcome back', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600)),
                     const SizedBox(height: 24),
                     TextFormField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
                       textInputAction: TextInputAction.next,
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
-                        prefixIcon: Icon(Icons.email_outlined),
-                        border: OutlineInputBorder(),
-                      ),
+                      decoration: const InputDecoration(labelText: 'Email', prefixIcon: Icon(Icons.email_outlined), border: OutlineInputBorder()),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
                           return 'Enter your email';
@@ -101,8 +86,7 @@ class _SignInState extends State<SignIn> {
                         return null;
                       },
                       focusNode: _emailFocusNode,
-                      onFieldSubmitted: (_) =>
-                          _focusNextField(_passwordFocusNode),
+                      onFieldSubmitted: (_) => _focusNextField(_passwordFocusNode),
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
@@ -114,14 +98,8 @@ class _SignInState extends State<SignIn> {
                         prefixIcon: const Icon(Icons.lock_outline),
                         border: const OutlineInputBorder(),
                         suffixIcon: IconButton(
-                          icon: Icon(
-                            _obscurePassword
-                                ? Icons.visibility_outlined
-                                : Icons.visibility_off_outlined,
-                          ),
-                          onPressed: () => setState(
-                            () => _obscurePassword = !_obscurePassword,
-                          ),
+                          icon: Icon(_obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined),
+                          onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                         ),
                       ),
                       validator: (value) {
@@ -134,37 +112,19 @@ class _SignInState extends State<SignIn> {
                     ),
                     Align(
                       alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () =>
-                            Navigator.of(context).pushNamed('/forgot-password'),
-                        child: const Text('Forgot password?'),
-                      ),
+                      child: TextButton(onPressed: () => Navigator.of(context).pushNamed('/forgot-password'), child: const Text('Forgot password?')),
                     ),
                     const SizedBox(height: 8),
                     FilledButton(
                       onPressed: _isLoading ? null : _submit,
-                      style: FilledButton.styleFrom(
-                        minimumSize: const Size.fromHeight(48),
-                      ),
-                      child: _isLoading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.white,
-                              ),
-                            )
-                          : const Text('Sign in'),
+                      style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(48)),
+                      child: _isLoading ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) : const Text('Sign in'),
                     ),
                     const SizedBox(height: 16),
                     Row(
                       children: const [
                         Expanded(child: Divider()),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8),
-                          child: Text('or'),
-                        ),
+                        Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Text('or')),
                         Expanded(child: Divider()),
                       ],
                     ),
@@ -175,12 +135,7 @@ class _SignInState extends State<SignIn> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text("Don't have an account?"),
-                        TextButton(
-                          onPressed: () => Navigator.of(
-                            context,
-                          ).pushReplacementNamed('/signup'),
-                          child: const Text('Sign up'),
-                        ),
+                        TextButton(onPressed: () => Navigator.of(context).pushReplacementNamed('/signup'), child: const Text('Sign up')),
                       ],
                     ),
                   ],

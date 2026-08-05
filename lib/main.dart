@@ -1,39 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-import 'page/application/application.dart';
-import 'page/forgot_password/forgot_password.dart';
-import 'page/sign_in/signin.dart';
-import 'page/sign_up/signup.dart';
+import 'package:speanmeas/core/theme/theme_data.dart' as theme;
 
-void main() {
-  runApp(const MyApp());
-}
+import "package:speanmeas/features/application/main.dart" as app;
+import 'package:speanmeas/features/forgot_password/main.dart' as fg_password;
+import 'package:speanmeas/features/sign_in/main.dart' as signin;
+import 'package:speanmeas/features/sign_up/main.dart' as signup;
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Spean Meas Hotel',
-      theme: ThemeData(
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple), //
-      ),
+      theme: theme.data(),
       debugShowCheckedModeBanner: false,
-      home: const MyHomePage(),
+      home: MyHomePage(),
       routes: {
-        _Routes.signUp: (context) => const SignUp(),
-        _Routes.signIn: (context) => const SignIn(),
-        _Routes.forgotPassword: (context) => const ForgotPassword(),
-        _Routes.application: (context) => const Application(),
+        _Routes.signUp: (context) => signup.Main_(),
+        _Routes.signIn: (context) => signin.Main_(),
+        _Routes.forgotPassword: (context) => fg_password.Main_(),
+        _Routes.application: (context) => app.Main_(),
       },
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -70,10 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text("Spean Meas Hotel"), //
-                Text(
-                  VERSION,
-                  style: TextStyle(fontSize: 12, color: Colors.blue),
-                ), //
+                Text(VERSION, style: TextStyle(fontSize: 12, color: Colors.blue)), //
               ],
             ),
           ],
@@ -87,25 +80,10 @@ class _MyHomePageState extends State<MyHomePage> {
           padding: EdgeInsets.zero,
 
           children: [
-            _buildSideItem(
-              context,
-              'Sign Up',
-              Icons.person_add_outlined,
-              '/signup',
-            ),
+            _buildSideItem(context, 'Sign Up', Icons.person_add_outlined, '/signup'),
             _buildSideItem(context, 'Sign In', Icons.login, '/signin'),
-            _buildSideItem(
-              context,
-              'Forgot Password',
-              Icons.lock_reset_outlined,
-              '/forgot-password',
-            ),
-            _buildSideItem(
-              context,
-              'Main Application',
-              Icons.dashboard_outlined,
-              '/application',
-            ),
+            _buildSideItem(context, 'Forgot Password', Icons.lock_reset_outlined, '/forgot-password'),
+            _buildSideItem(context, 'Main Application', Icons.dashboard_outlined, '/application'),
           ],
         ),
       ),
@@ -128,15 +106,10 @@ class _Routes {
   static const application = '/application';
 }
 
-Widget _buildSideItem(
-  BuildContext context,
-  String title,
-  IconData icon,
-  String route,
-) {
-  return ListTile(
-    leading: Icon(icon),
-    title: Text(title),
-    onTap: () => Navigator.pushNamed(context, route),
-  );
+Widget _buildSideItem(BuildContext context, String title, IconData icon, String route) {
+  return ListTile(leading: Icon(icon), title: Text(title), onTap: () => Navigator.pushNamed(context, route));
+}
+
+void main() {
+  runApp(MyApp());
 }

@@ -13,21 +13,11 @@ class AuthService {
   static String? _tokenType;
   static String? _username;
 
-  static Future<String> signup({
-    required String username,
-    required String password,
-    required String fullName,
-    required String phoneNumber,
-  }) async {
+  static Future<String> signup({required String username, required String password, required String fullName, required String phoneNumber}) async {
     final response = await http.post(
       Uri.parse('$baseUrl$signupPath'),
       headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      body: {
-        'username': username,
-        'password': password,
-        'full_name': fullName,
-        'phone_number': phoneNumber,
-      },
+      body: {'username': username, 'password': password, 'full_name': fullName, 'phone_number': phoneNumber},
     );
 
     if (response.statusCode == 200) {
@@ -41,15 +31,8 @@ class AuthService {
     }
   }
 
-  static Future<String> signin({
-    required String username,
-    required String password,
-  }) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl$signinPath'),
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      body: {'username': username, 'password': password},
-    );
+  static Future<String> signin({required String username, required String password}) async {
+    final response = await http.post(Uri.parse('$baseUrl$signinPath'), headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: {'username': username, 'password': password});
 
     if (response.statusCode == 200) {
       final json = jsonDecode(response.body) as Map<String, dynamic>;
@@ -68,10 +51,7 @@ class AuthService {
       throw Exception('No signed-in user found.');
     }
 
-    final response = await http.post(
-      Uri.parse('$baseUrl$signoutPath'),
-      headers: {'Authorization': '${_tokenType ?? 'bearer'} $_accessToken'},
-    );
+    final response = await http.post(Uri.parse('$baseUrl$signoutPath'), headers: {'Authorization': '${_tokenType ?? 'bearer'} $_accessToken'});
 
     if (response.statusCode == 200) {
       _accessToken = null;
