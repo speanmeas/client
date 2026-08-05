@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../auth/auth_service.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -15,6 +16,7 @@ class _SignInState extends State<SignIn> {
   final _passwordController = TextEditingController();
 
   bool _obscurePassword = true;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -25,11 +27,35 @@ class _SignInState extends State<SignIn> {
     super.dispose();
   }
 
-  void _submit() {
-    if (_formKey.currentState!.validate()) {
-      print('Email: ${_emailController.text}');
-      print('Password: ${_passwordController.text}');
+  Future<void> _submit() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isLoading = true);
+
+    try {
+      final result = await AuthService.signin(
+        username: _emailController.text.trim(),
+        password: _passwordController.text,
+      );
+
+      if (!mounted) return;
+
+      debugPrint('Sign in success: $result');
+
+      Navigator.of(context).pushReplacementNamed('/application');
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(_friendlyError(e))));
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  String _friendlyError(Object e) {
+    final msg = e.toString().replaceFirst('Exception: ', '');
+    return msg.isEmpty ? 'Sign in failed. Please try again.' : msg;
   }
 
   void _focusNextField(FocusNode nextFocusNode) {
@@ -41,11 +67,11 @@ class _SignInState extends State<SignIn> {
     return Scaffold(
       appBar: AppBar(title: const Text('Sign in')),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 420),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 420),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
               child: Form(
                 key: _formKey,
                 child: Column(
@@ -116,11 +142,20 @@ class _SignInState extends State<SignIn> {
                     ),
                     const SizedBox(height: 8),
                     FilledButton(
-                      onPressed: _submit,
+                      onPressed: _isLoading ? null : _submit,
                       style: FilledButton.styleFrom(
                         minimumSize: const Size.fromHeight(48),
                       ),
-                      child: const Text('Sign in'),
+                      child: _isLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Text('Sign in'),
                     ),
                     const SizedBox(height: 16),
                     Row(

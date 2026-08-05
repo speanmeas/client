@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../auth/auth_service.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -24,6 +25,7 @@ class _SignUpState extends State<SignUp> {
 
   bool _obscurePassword = true;
   bool _isLoading = false;
+  String? _errorMessage;
 
   @override
   void dispose() {
@@ -42,22 +44,45 @@ class _SignUpState extends State<SignUp> {
     super.dispose();
   }
 
-  void _submit() {
+  void _submit() async {
     if (_formKey.currentState!.validate()) {
-      setState(() => _isLoading = true);
+      setState(() {
+        _isLoading = true;
+        _errorMessage = null;
+      });
 
-      // Simulate API call
-      Future.delayed(const Duration(seconds: 2), () {
-        if (!mounted) {
-          return;
-        }
+      try {
+        await AuthService.signup(
+          username:
+              _firstNameController.text.trim() +
+              ' ' +
+              _lastNameController.text.trim(),
+          password: _passwordController.text,
+          fullName:
+              _firstNameController.text.trim() +
+              ' ' +
+              _lastNameController.text.trim(),
+          phoneNumber: _phoneController.text.trim(),
+        );
 
-        setState(() => _isLoading = false);
+        if (!mounted) return;
 
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(const SnackBar(content: Text('Account created!')));
-      });
+
+        // Navigate to sign in (or home, if you auto-login)
+        Navigator.of(context).pushReplacementNamed('/signin');
+      } catch (e) {
+        if (!mounted) return;
+        setState(() {
+          _errorMessage = e.toString().replaceFirst('Exception: ', '');
+        });
+      } finally {
+        if (mounted) {
+          setState(() => _isLoading = false);
+        }
+      }
     }
   }
 

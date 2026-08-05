@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
+import '../auth/auth_service.dart';
 
 class Application extends StatelessWidget {
   const Application({super.key});
 
   Future<void> _signOut(BuildContext context) async {
+    try {
+      await AuthService.signout();
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Sign out failed: $e')));
+      return;
+    }
+
     if (!context.mounted) return;
-    // TODO: Make sure it goes back to sign page
-    Navigator.of(context).popUntil((route) => route.isFirst);
+    Navigator.of(context).pushNamedAndRemoveUntil('/signin', (route) => false);
   }
 
   @override
