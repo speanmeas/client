@@ -31,11 +31,11 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     return Scaffold(
       appBar: AppBar(title: const Text('Reset password')),
       body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 420),
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 420),
               child: _emailSent ? _buildConfirmation() : _buildForm(),
             ),
           ),

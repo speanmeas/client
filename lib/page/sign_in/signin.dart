@@ -41,11 +41,11 @@ class _SignInState extends State<SignIn> {
     return Scaffold(
       appBar: AppBar(title: const Text('Sign in')),
       body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 420),
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 420),
               child: Form(
                 key: _formKey,
                 child: Column(
