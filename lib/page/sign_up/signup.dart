@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../auth/auth_service.dart';
 
 class SignUp extends StatefulWidget {
@@ -25,7 +26,6 @@ class _SignUpState extends State<SignUp> {
 
   bool _obscurePassword = true;
   bool _isLoading = false;
-  String? _errorMessage;
 
   @override
   void dispose() {
@@ -48,7 +48,6 @@ class _SignUpState extends State<SignUp> {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
-        _errorMessage = null;
       });
 
       try {
@@ -75,9 +74,7 @@ class _SignUpState extends State<SignUp> {
         Navigator.of(context).pushReplacementNamed('/signin');
       } catch (e) {
         if (!mounted) return;
-        setState(() {
-          _errorMessage = e.toString().replaceFirst('Exception: ', '');
-        });
+        setState(() {});
       } finally {
         if (mounted) {
           setState(() => _isLoading = false);
