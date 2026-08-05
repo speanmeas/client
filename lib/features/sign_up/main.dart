@@ -1,13 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:speanmeas/core/theme/theme_data.dart' as theme;
 
 import '../auth/main.dart';
-
-class Main_ extends StatefulWidget {
-  const Main_({super.key});
-
-  @override
-  State<Main_> createState() => _Main_State();
-}
 
 class _Main_State extends State<Main_> {
   final _formKey = GlobalKey<FormState>();
@@ -237,4 +231,22 @@ class _Main_State extends State<Main_> {
       ),
     );
   }
+}
+
+class Main_ extends StatefulWidget {
+  Main_({super.key});
+
+  @override
+  State<Main_> createState() => _Main_State();
+}
+
+void main() {
+  runApp(
+    MaterialApp(
+      title: "Development", //
+      theme: theme.data(), //
+      debugShowCheckedModeBanner: false,
+      home: Main_(),
+    ),
+  );
 }
