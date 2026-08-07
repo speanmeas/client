@@ -5,32 +5,34 @@ import '../auth/main.dart';
 
 class _Main_State extends State<Main_> {
   final _formKey = GlobalKey<FormState>();
-  final _firstNameFocusNode = FocusNode();
-  final _lastNameFocusNode = FocusNode();
-  final _phoneFocusNode = FocusNode();
-  final _passwordFocusNode = FocusNode();
-  final _confirmFocusNode = FocusNode();
-  final _firstNameController = TextEditingController();
-  final _lastNameController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _confirmController = TextEditingController();
+
+  final _node_firstName = FocusNode();
+  final _node_lastName = FocusNode();
+  final _node_phone = FocusNode();
+  final _node_password = FocusNode();
+  final _node_confirm = FocusNode();
+
+  final _c_firstName = TextEditingController();
+  final _c_lastName = TextEditingController();
+  final _c_phone = TextEditingController();
+  final _c_password = TextEditingController();
+  final _c_confirm = TextEditingController();
 
   bool _obscurePassword = true;
   bool _isLoading = false;
 
   @override
   void dispose() {
-    _firstNameFocusNode.dispose();
-    _lastNameFocusNode.dispose();
-    _phoneFocusNode.dispose();
-    _passwordFocusNode.dispose();
-    _confirmFocusNode.dispose();
-    _firstNameController.dispose();
-    _lastNameController.dispose();
-    _phoneController.dispose();
-    _passwordController.dispose();
-    _confirmController.dispose();
+    _node_firstName.dispose();
+    _node_lastName.dispose();
+    _node_phone.dispose();
+    _node_password.dispose();
+    _node_confirm.dispose();
+    _c_firstName.dispose();
+    _c_lastName.dispose();
+    _c_phone.dispose();
+    _c_password.dispose();
+    _c_confirm.dispose();
     super.dispose();
   }
 
@@ -42,16 +44,10 @@ class _Main_State extends State<Main_> {
 
       try {
         await AuthService.signup(
-          username:
-              _firstNameController.text.trim() +
-              ' ' +
-              _lastNameController.text.trim(),
-          password: _passwordController.text,
-          fullName:
-              _firstNameController.text.trim() +
-              ' ' +
-              _lastNameController.text.trim(),
-          phoneNumber: _phoneController.text.trim(),
+          username: _c_firstName.text.trim() + ' ' + _c_lastName.text.trim(),
+          password: _c_password.text,
+          fullName: _c_firstName.text.trim() + ' ' + _c_lastName.text.trim(),
+          phoneNumber: _c_phone.text.trim(),
         );
 
         if (!mounted) return;
@@ -101,8 +97,8 @@ class _Main_State extends State<Main_> {
                     ),
                     const SizedBox(height: 24),
                     TextFormField(
-                      focusNode: _firstNameFocusNode,
-                      controller: _firstNameController,
+                      focusNode: _node_firstName,
+                      controller: _c_firstName,
                       textInputAction: TextInputAction.next,
                       decoration: const InputDecoration(
                         labelText: 'First name',
@@ -115,13 +111,12 @@ class _Main_State extends State<Main_> {
                         }
                         return null;
                       },
-                      onFieldSubmitted: (_) =>
-                          _focusNextField(_lastNameFocusNode),
+                      onFieldSubmitted: (_) => _focusNextField(_node_lastName),
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
-                      focusNode: _lastNameFocusNode,
-                      controller: _lastNameController,
+                      focusNode: _node_lastName,
+                      controller: _c_lastName,
                       textInputAction: TextInputAction.next,
                       decoration: const InputDecoration(
                         labelText: 'Last name',
@@ -134,12 +129,12 @@ class _Main_State extends State<Main_> {
                         }
                         return null;
                       },
-                      onFieldSubmitted: (_) => _focusNextField(_phoneFocusNode),
+                      onFieldSubmitted: (_) => _focusNextField(_node_phone),
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
-                      focusNode: _phoneFocusNode,
-                      controller: _phoneController,
+                      focusNode: _node_phone,
+                      controller: _c_phone,
                       keyboardType: TextInputType.phone,
                       textInputAction: TextInputAction.next,
                       decoration: const InputDecoration(
@@ -165,8 +160,8 @@ class _Main_State extends State<Main_> {
 
                     const SizedBox(height: 16),
                     TextFormField(
-                      focusNode: _passwordFocusNode,
-                      controller: _passwordController,
+                      focusNode: _node_password,
+                      controller: _c_password,
                       obscureText: _obscurePassword,
                       textInputAction: TextInputAction.next,
                       decoration: InputDecoration(
@@ -190,13 +185,12 @@ class _Main_State extends State<Main_> {
                         }
                         return null;
                       },
-                      onFieldSubmitted: (_) =>
-                          _focusNextField(_confirmFocusNode),
+                      onFieldSubmitted: (_) => _focusNextField(_node_confirm),
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
-                      focusNode: _confirmFocusNode,
-                      controller: _confirmController,
+                      focusNode: _node_confirm,
+                      controller: _c_confirm,
                       obscureText: true,
                       textInputAction: TextInputAction.done,
                       decoration: InputDecoration(
@@ -208,7 +202,7 @@ class _Main_State extends State<Main_> {
                         if (value == null || value.isEmpty) {
                           return 'Confirm your password';
                         }
-                        if (value != _passwordController.text) {
+                        if (value != _c_password.text) {
                           return 'Passwords do not match';
                         }
                         return null;

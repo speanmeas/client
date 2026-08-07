@@ -11,20 +11,21 @@ class Main_ extends StatefulWidget {
 
 class _Main_State extends State<Main_> {
   final _formKey = GlobalKey<FormState>();
-  final _usernameFocusNode = FocusNode();
-  final _passwordFocusNode = FocusNode();
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _node_username = FocusNode();
+  final _node_password = FocusNode();
+
+  final _c_username = TextEditingController();
+  final _c_password = TextEditingController();
 
   bool _obscurePassword = true;
   bool _isLoading = false;
 
   @override
   void dispose() {
-    _usernameFocusNode.dispose();
-    _passwordFocusNode.dispose();
-    _usernameController.dispose();
-    _passwordController.dispose();
+    _node_username.dispose();
+    _node_password.dispose();
+    _c_username.dispose();
+    _c_password.dispose();
     super.dispose();
   }
 
@@ -35,8 +36,8 @@ class _Main_State extends State<Main_> {
 
     try {
       final result = await AuthService.signin(
-        username: _usernameController.text.trim(),
-        password: _passwordController.text,
+        username: _c_username.text.trim(),
+        password: _c_password.text,
       );
 
       if (!mounted) return;
@@ -87,7 +88,7 @@ class _Main_State extends State<Main_> {
                     ),
                     const SizedBox(height: 24),
                     TextFormField(
-                      controller: _usernameController,
+                      controller: _c_username,
                       keyboardType: TextInputType.text,
                       textInputAction: TextInputAction.next,
                       decoration: const InputDecoration(
@@ -101,13 +102,12 @@ class _Main_State extends State<Main_> {
                         }
                         return null;
                       },
-                      focusNode: _usernameFocusNode,
-                      onFieldSubmitted: (_) =>
-                          _focusNextField(_passwordFocusNode),
+                      focusNode: _node_username,
+                      onFieldSubmitted: (_) => _focusNextField(_node_password),
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
-                      controller: _passwordController,
+                      controller: _c_password,
                       obscureText: _obscurePassword,
                       textInputAction: TextInputAction.done,
                       decoration: InputDecoration(
@@ -131,7 +131,6 @@ class _Main_State extends State<Main_> {
                         }
                         return null;
                       },
-                      onFieldSubmitted: (_) => _submit(),
                     ),
                     Align(
                       alignment: Alignment.centerRight,
