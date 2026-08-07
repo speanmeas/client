@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../auth/main.dart';
+import "package:speanmeas/features/auth/main.dart" as auth;
 
 class Main_ extends StatefulWidget {
   const Main_({super.key});
@@ -11,21 +10,21 @@ class Main_ extends StatefulWidget {
 
 class _Main_State extends State<Main_> {
   final _formKey = GlobalKey<FormState>();
-  final _node_username = FocusNode();
-  final _node_password = FocusNode();
+  final node_username = FocusNode();
+  final node_password = FocusNode();
 
-  final _c_username = TextEditingController();
-  final _c_password = TextEditingController();
+  final c_username = TextEditingController();
+  final c_password = TextEditingController();
 
   bool _obscurePassword = true;
   bool _isLoading = false;
 
   @override
   void dispose() {
-    _node_username.dispose();
-    _node_password.dispose();
-    _c_username.dispose();
-    _c_password.dispose();
+    node_username.dispose();
+    node_password.dispose();
+    c_username.dispose();
+    c_password.dispose();
     super.dispose();
   }
 
@@ -35,9 +34,9 @@ class _Main_State extends State<Main_> {
     setState(() => _isLoading = true);
 
     try {
-      final result = await AuthService.signin(
-        username: _c_username.text.trim(),
-        password: _c_password.text,
+      final result = await auth.AuthService.signin(
+        username: c_username.text.trim(),
+        password: c_password.text,
       );
 
       if (!mounted) return;
@@ -88,7 +87,7 @@ class _Main_State extends State<Main_> {
                     ),
                     const SizedBox(height: 24),
                     TextFormField(
-                      controller: _c_username,
+                      controller: c_username,
                       keyboardType: TextInputType.text,
                       textInputAction: TextInputAction.next,
                       decoration: const InputDecoration(
@@ -102,12 +101,12 @@ class _Main_State extends State<Main_> {
                         }
                         return null;
                       },
-                      focusNode: _node_username,
-                      onFieldSubmitted: (_) => _focusNextField(_node_password),
+                      focusNode: node_username,
+                      onFieldSubmitted: (_) => _focusNextField(node_password),
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
-                      controller: _c_password,
+                      controller: c_password,
                       obscureText: _obscurePassword,
                       textInputAction: TextInputAction.done,
                       decoration: InputDecoration(

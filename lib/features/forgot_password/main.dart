@@ -9,20 +9,20 @@ class Main_ extends StatefulWidget {
 
 class _Main_State extends State<Main_> {
   final _formKey = GlobalKey<FormState>();
-  final _c_phonenum = TextEditingController();
+  final c_phonenum = TextEditingController();
 
   final bool _isLoading = false;
   final bool _phonenumSent = false;
 
   @override
   void dispose() {
-    _c_phonenum.dispose();
+    c_phonenum.dispose();
     super.dispose();
   }
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
-      print("Sending reset link to ${_c_phonenum.text.trim()}");
+      print("Sending reset link to ${c_phonenum.text.trim()}");
     }
   }
 
@@ -63,7 +63,7 @@ class _Main_State extends State<Main_> {
           ),
           const SizedBox(height: 24),
           TextFormField(
-            controller: _c_phonenum,
+            controller: c_phonenum,
             keyboardType: TextInputType.emailAddress,
             decoration: const InputDecoration(
               labelText: 'Phone number',
@@ -115,7 +115,7 @@ class _Main_State extends State<Main_> {
         ),
         const SizedBox(height: 8),
         Text(
-          'A reset link was sent to ${_c_phonenum.text.trim()}.',
+          'A reset link was sent to ${c_phonenum.text.trim()}.',
           textAlign: TextAlign.center,
           style: TextStyle(color: colorScheme.onSurfaceVariant),
         ),
