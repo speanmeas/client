@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:speanmeas/core/endpoint.g.dart' as ep;
 import 'package:speanmeas/core/theme/theme_data.dart' as theme;
+import 'package:speanmeas/core/utility/dio.dart';
+import 'package:speanmeas/features/sign_in/main.dart' as signin;
 
 Widget _layout(List<Widget> children) {
   return Scaffold(
@@ -90,31 +93,6 @@ class _Main_State extends State<Main_> {
     super.dispose();
   }
 
-  void _submit() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
-
-      try {
-        if (!mounted) return;
-
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Account created!')));
-
-        Navigator.of(context).pushReplacementNamed('/signin');
-      } catch (e) {
-        if (!mounted) return;
-        setState(() {});
-      } finally {
-        if (mounted) {
-          setState(() => _isLoading = false);
-        }
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return _layout([
@@ -166,13 +144,6 @@ class _Main_State extends State<Main_> {
                 label: 'Username',
                 prefixIcon: Icon(Icons.person_outline),
                 enable: false,
-
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Enter your first and last name above';
-                  }
-                  return null;
-                },
               ),
               const SizedBox(height: 16),
               _buildTextField(
@@ -244,7 +215,7 @@ class _Main_State extends State<Main_> {
 
               const SizedBox(height: 24),
               FilledButton(
-                onPressed: _isLoading ? null : _submit,
+                onPressed: _isLoading ? null : on_sign_up,
                 style: FilledButton.styleFrom(
                   minimumSize: const Size.fromHeight(48),
                 ),
@@ -285,6 +256,42 @@ class _Main_State extends State<Main_> {
         ),
       ),
     ]);
+  }
+
+  void on_sign_up() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      try {
+        var tmp = await dio.post(
+          ep.AUTH_CLIENT_KHUNBUNHAP_SIGN_UP,
+          data: {
+            'username': c_username.text.trim(),
+            'password': c_password.text.trim(),
+            'full_name': '${c_firstName.text.trim()} ${c_lastName.text.trim()}',
+            'phone_number': c_phone.text.trim(),
+          },
+        );
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => signin.Main_()),
+        );
+      } catch (e) {
+        if (!mounted) return;
+
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+      } finally {
+        if (!mounted) return;
+
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   void _loadUsername() {
