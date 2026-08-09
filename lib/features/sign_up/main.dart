@@ -115,8 +115,12 @@ class _Main_State extends State<Main_> {
                 label: 'First name',
                 prefixIcon: Icon(Icons.person_outline),
                 validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
+                  final name = value?.trim() ?? '';
+                  if (name.isEmpty) {
                     return 'Enter your first name';
+                  }
+                  if (!RegExp(r'^[A-Za-z]+$').hasMatch(name)) {
+                    return 'Letters only';
                   }
                   return null;
                 },
@@ -130,8 +134,12 @@ class _Main_State extends State<Main_> {
                 label: 'Last name',
                 prefixIcon: Icon(Icons.person_outline),
                 validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
+                  final name = value?.trim() ?? '';
+                  if (name.isEmpty) {
                     return 'Enter your last name';
+                  }
+                  if (!RegExp(r'^[A-Za-z]+$').hasMatch(name)) {
+                    return 'Letters only';
                   }
                   return null;
                 },
@@ -162,6 +170,9 @@ class _Main_State extends State<Main_> {
                   }
                   if (phone.length < 8) {
                     return 'Must be at least 8 digits';
+                  }
+                  if (!phone.startsWith('0')) {
+                    return 'Must start with 0';
                   }
                   return null;
                 },
@@ -265,7 +276,7 @@ class _Main_State extends State<Main_> {
       });
 
       try {
-        var tmp = await dio.post(
+        await dio.post(
           ep.AUTH_CLIENT_KHUNBUNHAP_SIGN_UP,
           data: {
             'username': c_username.text.trim(),
@@ -274,22 +285,21 @@ class _Main_State extends State<Main_> {
             'phone_number': c_phone.text.trim(),
           },
         );
+
+        if (!mounted) return;
+
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => signin.Main_()),
         );
       } catch (e) {
-        if (!mounted) return;
-
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+        print("Sign up failed: $e");
       } finally {
-        if (!mounted) return;
-
-        setState(() {
-          _isLoading = false;
-        });
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
       }
     }
   }
