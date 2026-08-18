@@ -1,5 +1,51 @@
 import 'package:flutter/material.dart';
 
+Widget _layout(List<Widget> children) {
+  return Scaffold(
+    appBar: AppBar(
+      title: const Text('Reset password'),
+      centerTitle: false,
+      bottom: PreferredSize(
+        preferredSize: const Size.fromHeight(0),
+        child: const Divider(thickness: 1, color: Colors.black),
+      ),
+    ),
+    body: LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Center(child: Column(children: children)),
+          ),
+        );
+      },
+    ),
+  );
+}
+
+Widget _buildTextField({
+  required String label,
+  required TextEditingController controller,
+  required TextInputAction textInputAction,
+  String? Function(String?)? validator,
+  FocusNode? focusNode,
+  Icon? prefixIcon,
+}) {
+  return TextFormField(
+    focusNode: focusNode,
+    controller: controller,
+    textInputAction: textInputAction,
+    keyboardType: TextInputType.phone,
+    decoration: InputDecoration(
+      labelText: label,
+      border: const OutlineInputBorder(),
+      prefixIcon: prefixIcon,
+    ),
+    validator: validator,
+    onFieldSubmitted: (_) => FocusScope.of(focusNode!.context!).unfocus(),
+  );
+}
+
 class Main_ extends StatefulWidget {
   const Main_({super.key});
 
@@ -10,38 +56,37 @@ class Main_ extends StatefulWidget {
 class _Main_State extends State<Main_> {
   final _formKey = GlobalKey<FormState>();
   final c_phonenum = TextEditingController();
+  final node_phonenum = FocusNode();
 
-  final bool _isLoading = false;
-  final bool _phonenumSent = false;
+  bool _isLoading = false;
+  bool _phonenumSent = false;
 
   @override
   void dispose() {
     c_phonenum.dispose();
+    node_phonenum.dispose();
     super.dispose();
   }
 
   void _submit() {
-    if (_formKey.currentState!.validate()) {
-      print("Sending reset link to ${c_phonenum.text.trim()}");
-    }
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isLoading = true);
+    debugPrint('Sending reset link to ${c_phonenum.text.trim()}');
+    setState(() {
+      _isLoading = false;
+      _phonenumSent = true;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Reset password')),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 420),
-              child: _phonenumSent ? _buildConfirmation() : _buildForm(),
-            ),
-          ),
-        ),
+    return _layout([
+      ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 420),
+        child: _phonenumSent ? _buildConfirmation() : _buildForm(),
       ),
-    );
+    ]);
   }
 
   Widget _buildForm() {
@@ -62,14 +107,12 @@ class _Main_State extends State<Main_> {
             style: TextStyle(color: colorScheme.onSurfaceVariant),
           ),
           const SizedBox(height: 24),
-          TextFormField(
+          _buildTextField(
             controller: c_phonenum,
-            keyboardType: TextInputType.emailAddress,
-            decoration: const InputDecoration(
-              labelText: 'Phone number',
-              prefixIcon: Icon(Icons.email_outlined),
-              border: OutlineInputBorder(),
-            ),
+            focusNode: node_phonenum,
+            textInputAction: TextInputAction.done,
+            label: 'Phone number',
+            prefixIcon: const Icon(Icons.phone_outlined),
             validator: (value) {
               if (value == null || value.trim().isEmpty) {
                 return 'Enter your phone number';
@@ -77,7 +120,6 @@ class _Main_State extends State<Main_> {
 
               return null;
             },
-            onFieldSubmitted: (_) => _submit(),
           ),
           const SizedBox(height: 24),
           FilledButton(
@@ -121,7 +163,8 @@ class _Main_State extends State<Main_> {
         ),
         const SizedBox(height: 24),
         OutlinedButton(
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () =>
+              Navigator.of(context).pushReplacementNamed('/signin'),
           child: const Text('Back to sign in'),
         ),
       ],
