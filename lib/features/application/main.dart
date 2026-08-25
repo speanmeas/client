@@ -44,7 +44,11 @@ class _Main_State extends State<Main_> {
       SizedBox(height: 20),
       Text(
         'Welcome to Spean Meas Hotel',
-        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: colorScheme.primary),
+        style: TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+          color: colorScheme.primary,
+        ),
       ),
       SizedBox(height: 20),
       OutlinedButton(
@@ -61,7 +65,9 @@ class _Main_State extends State<Main_> {
       await AuthService.signout();
     } catch (e) {
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Sign out failed: $e')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Sign out failed: $e')));
       return;
     }
 

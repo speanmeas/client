@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-
 import 'package:speanmeas/core/theme/theme_data.dart' as theme;
-
 import "package:speanmeas/features/application/main.dart" as app;
 import 'package:speanmeas/features/forgot_password/main.dart' as fg_password;
 import 'package:speanmeas/features/sign_in/main.dart' as signin;
@@ -66,7 +64,10 @@ class _MyHomePageState extends State<MyHomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text("Spean Meas Hotel"), //
-                Text(VERSION, style: TextStyle(fontSize: 12, color: Colors.blue)), //
+                Text(
+                  VERSION,
+                  style: TextStyle(fontSize: 12, color: Colors.blue),
+                ), //
               ],
             ),
           ],
@@ -80,10 +81,25 @@ class _MyHomePageState extends State<MyHomePage> {
           padding: EdgeInsets.zero,
 
           children: [
-            _buildSideItem(context, 'Sign Up', Icons.person_add_outlined, '/signup'),
+            _buildSideItem(
+              context,
+              'Sign Up',
+              Icons.person_add_outlined,
+              '/signup',
+            ),
             _buildSideItem(context, 'Sign In', Icons.login, '/signin'),
-            _buildSideItem(context, 'Forgot Password', Icons.lock_reset_outlined, '/forgot-password'),
-            _buildSideItem(context, 'Main Application', Icons.dashboard_outlined, '/application'),
+            _buildSideItem(
+              context,
+              'Forgot Password',
+              Icons.lock_reset_outlined,
+              '/forgot-password',
+            ),
+            _buildSideItem(
+              context,
+              'Main Application',
+              Icons.dashboard_outlined,
+              '/application',
+            ),
           ],
         ),
       ),
@@ -106,8 +122,17 @@ class _Routes {
   static const application = '/application';
 }
 
-Widget _buildSideItem(BuildContext context, String title, IconData icon, String route) {
-  return ListTile(leading: Icon(icon), title: Text(title), onTap: () => Navigator.pushNamed(context, route));
+Widget _buildSideItem(
+  BuildContext context,
+  String title,
+  IconData icon,
+  String route,
+) {
+  return ListTile(
+    leading: Icon(icon),
+    title: Text(title),
+    onTap: () => Navigator.pushNamed(context, route),
+  );
 }
 
 void main() {
