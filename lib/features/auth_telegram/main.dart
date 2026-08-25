@@ -68,7 +68,7 @@ class _Main_State extends State<Main_> {
         child: Text('Auth Telegram'),
         onPressed: () async {
           try {
-            final url = Uri.parse('https://cs8000.1riel.com/login.html');
+            final url = Uri.parse('https://trychansak.1riel.com/telegram');
             if (await canLaunchUrl(url)) {
               await launchUrl(url, mode: LaunchMode.externalApplication);
             } else {
