@@ -62,17 +62,20 @@ class _Main_State extends State<Main_> {
       final username = c_username.text.trim();
       final password = c_password.text.trim();
 
-      var tmp = await dio.post(
-        ep.AUTH_CLIENT_KHUNBUNHAP_SIGN_IN,
-        data: {
-          'username': username, //
-          'password': password,
-        },
+      // var tmp = await dio.post(
+      //   // ep.AUTH_CLIENT_KHUNBUNHAP_SIGN_IN,
+      //   // data: {
+      //   //   'username': username, //
+      //   //   'password': password,
+      //   // },
+      // );
+
+      // print(tmp);
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => app.Main_()),
       );
-
-      print(tmp);
-
-      Navigator.push(context, MaterialPageRoute(builder: (context) => app.Main_()));
     } catch (e) {
       print("Sign in failed");
     }
