@@ -314,8 +314,9 @@ class _Main_State extends State<Main_> {
                 children: [
                   const Text('Already have an account?'),
                   TextButton(
-                    onPressed: () =>
-                        Navigator.of(context).pushReplacementNamed('/signin'),
+                    onPressed: () => Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (context) => signin.Main_()),
+                    ),
                     child: const Text('Sign in'),
                   ),
                 ],
