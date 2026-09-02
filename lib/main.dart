@@ -55,19 +55,19 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            //
-            SizedBox(width: 4), //
-            // logo
-            SizedBox(width: 32, height: 32, child: Placeholder()), //
-            SizedBox(width: 4), //
+            
+            SizedBox(width: 4),
+            
+            SizedBox(width: 32, height: 32, child: Placeholder()),
+            SizedBox(width: 4),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Spean Meas Hotel"), //
+                Text("Spean Meas Hotel"),
                 Text(
                   VERSION,
                   style: TextStyle(fontSize: 12, color: Colors.blue),
-                ), //
+                ),
               ],
             ),
           ],
@@ -107,7 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: .center,
           children: [
-            Text("Welcome"), //
+            Text("Welcome"), 
           ],
         ),
       ),

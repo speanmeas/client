@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import "package:speanmeas/features/auth/main.dart" as auth;
+import 'package:speanmeas/features/widget/widget.dart' as widget;
 
 Widget _layout(List<Widget> children) {
   return Scaffold(
@@ -24,37 +25,6 @@ Widget _layout(List<Widget> children) {
   );
 }
 
-Widget _buildTextField({
-  required String label,
-  required TextEditingController controller,
-  required TextInputAction textInputAction,
-  String? Function(String?)? validator,
-  FocusNode? focusNode,
-  Icon? prefixIcon,
-  Widget? suffixIcon,
-  FocusNode? nextFocusNode,
-  bool obscureText = false,
-}) {
-  return TextFormField(
-    focusNode: focusNode,
-    controller: controller,
-    obscureText: obscureText,
-    textInputAction: textInputAction,
-    decoration: InputDecoration(
-      labelText: label,
-      border: const OutlineInputBorder(),
-      prefixIcon: prefixIcon,
-      suffixIcon: suffixIcon,
-    ),
-    validator: validator,
-    onFieldSubmitted: (_) {
-      if (nextFocusNode != null && focusNode?.context != null) {
-        FocusScope.of(focusNode!.context!).requestFocus(nextFocusNode);
-      }
-    },
-  );
-}
-
 class Main_ extends StatefulWidget {
   const Main_({super.key});
 
@@ -64,21 +34,19 @@ class Main_ extends StatefulWidget {
 
 class _Main_State extends State<Main_> {
   final _formKey = GlobalKey<FormState>();
-  final node_username = FocusNode();
+  final node_identifier = FocusNode();
   final node_password = FocusNode();
 
-  final c_username = TextEditingController();
-  final c_password = TextEditingController();
+  String identifier = '';
+  String password = '';
 
   bool _obscurePassword = true;
   bool _isLoading = false;
 
   @override
   void dispose() {
-    node_username.dispose();
+    node_identifier.dispose();
     node_password.dispose();
-    c_username.dispose();
-    c_password.dispose();
     super.dispose();
   }
 
@@ -89,8 +57,8 @@ class _Main_State extends State<Main_> {
 
     try {
       final result = await auth.AuthService.signin(
-        username: c_username.text.trim(),
-        password: c_password.text,
+        username: identifier.trim(),
+        password: password.trim(),
       );
 
       if (!mounted) return;
@@ -128,23 +96,25 @@ class _Main_State extends State<Main_> {
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 24),
-              _buildTextField(
-                controller: c_username,
+              widget.buildTextField(
+                initialValue: identifier,
                 textInputAction: TextInputAction.next,
-                label: 'Username',
+                label: 'Username or phone number',
+                helperText: 'Phone number is preferred',
                 prefixIcon: const Icon(Icons.person_outline),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Enter your username';
+                    return 'Enter your username or phone number';
                   }
                   return null;
                 },
-                focusNode: node_username,
+                onChanged: (value) => setState(() => identifier = value),
+                focusNode: node_identifier,
                 nextFocusNode: node_password,
               ),
-              const SizedBox(height: 16),
-              _buildTextField(
-                controller: c_password,
+              const SizedBox(height: 8),
+              widget.buildTextField(
+                initialValue: password,
                 obscureText: _obscurePassword,
                 textInputAction: TextInputAction.done,
                 label: 'Password',
@@ -164,6 +134,7 @@ class _Main_State extends State<Main_> {
                   }
                   return null;
                 },
+                onChanged: (value) => setState(() => password = value),
                 focusNode: node_password,
               ),
               Align(

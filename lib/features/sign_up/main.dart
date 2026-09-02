@@ -5,6 +5,7 @@ import 'package:speanmeas/core/endpoint.g.dart' as ep;
 import 'package:speanmeas/core/theme/theme_data.dart' as theme;
 import 'package:speanmeas/core/utility/dio.dart';
 import 'package:speanmeas/features/sign_in/main.dart' as signin;
+import 'package:speanmeas/features/widget/widget.dart' as widget;
 
 class _UsernameInputFormatter extends TextInputFormatter {
   @override
@@ -26,7 +27,7 @@ class _UsernameInputFormatter extends TextInputFormatter {
 Widget _layout(List<Widget> children) {
   return Scaffold(
     appBar: AppBar(
-      title: Text('Create an account'), //
+      title: Text('Create an account'),
       centerTitle: false,
       bottom: PreferredSize(
         preferredSize: Size.fromHeight(0),
@@ -34,51 +35,8 @@ Widget _layout(List<Widget> children) {
       ),
     ),
     body: SingleChildScrollView(
-      child: Center(
-        child: Column(
-          children: children, //
-        ),
-      ),
+      child: Center(child: Column(children: children)),
     ),
-  );
-}
-
-Widget _buildTextField({
-  required String label,
-  required TextInputAction textInputAction,
-  required ValueChanged<String> onChanged,
-  Key? fieldKey,
-  String? initialValue,
-  String? Function(String?)? validator,
-  FocusNode? focusNode,
-  Icon? prefixIcon,
-  Widget? suffixIcon,
-  FocusNode? nextFocusNode,
-  bool obscureText = false,
-  bool enable = true,
-  List<TextInputFormatter>? inputFormatters,
-}) {
-  return TextFormField(
-    key: fieldKey,
-    focusNode: focusNode,
-    initialValue: initialValue,
-    obscureText: obscureText,
-    textInputAction: textInputAction,
-    enabled: enable,
-    inputFormatters: inputFormatters,
-    decoration: InputDecoration(
-      labelText: label,
-      border: const OutlineInputBorder(),
-      prefixIcon: prefixIcon,
-      suffixIcon: suffixIcon,
-    ),
-    validator: validator,
-    onChanged: onChanged,
-    onFieldSubmitted: (_) {
-      if (nextFocusNode != null && focusNode?.context != null) {
-        FocusScope.of(focusNode!.context!).requestFocus(nextFocusNode);
-      }
-    },
   );
 }
 
@@ -133,7 +91,7 @@ class _Main_State extends State<Main_> {
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 24),
-              _buildTextField(
+              widget.buildTextField(
                 focusNode: node_firstName,
                 initialValue: firstName,
                 textInputAction: TextInputAction.next,
@@ -158,7 +116,7 @@ class _Main_State extends State<Main_> {
                 nextFocusNode: node_lastName,
               ),
               const SizedBox(height: 16),
-              _buildTextField(
+              widget.buildTextField(
                 focusNode: node_lastName,
                 initialValue: lastName,
                 textInputAction: TextInputAction.next,
@@ -183,7 +141,7 @@ class _Main_State extends State<Main_> {
                 nextFocusNode: node_username,
               ),
               const SizedBox(height: 16),
-              _buildTextField(
+              widget.buildTextField(
                 fieldKey: ValueKey(
                   _usernameManuallyEdited ? 'username-manual' : username,
                 ),
@@ -208,7 +166,7 @@ class _Main_State extends State<Main_> {
                 nextFocusNode: node_phone,
               ),
               const SizedBox(height: 16),
-              _buildTextField(
+              widget.buildTextField(
                 focusNode: node_phone,
                 initialValue: phone,
                 textInputAction: TextInputAction.next,
@@ -234,7 +192,7 @@ class _Main_State extends State<Main_> {
                 nextFocusNode: node_password,
               ),
               const SizedBox(height: 16),
-              _buildTextField(
+              widget.buildTextField(
                 focusNode: node_password,
                 initialValue: password,
                 obscureText: _obscurePassword,
@@ -263,7 +221,7 @@ class _Main_State extends State<Main_> {
                 nextFocusNode: node_confirm,
               ),
               const SizedBox(height: 16),
-              _buildTextField(
+              widget.buildTextField(
                 focusNode: node_confirm,
                 initialValue: confirmPassword,
                 obscureText: true,
@@ -407,8 +365,8 @@ class Main_ extends StatefulWidget {
 void main() {
   runApp(
     MaterialApp(
-      title: "Development", //
-      theme: theme.data(), //
+      title: "Development",
+      theme: theme.data(),
       debugShowCheckedModeBanner: false,
       home: Main_(),
     ),
