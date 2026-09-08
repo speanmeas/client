@@ -241,18 +241,12 @@ class _Main_State extends State<Main_> {
               ),
 
               const SizedBox(height: 24),
-              FilledButton(
-                onPressed: _isLoading ? null : on_sign_up,
-                style: FilledButton.styleFrom(
-                  minimumSize: const Size.fromHeight(48),
-                ),
-                child: _isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Text('Sign up'),
+              widget.buildButton(
+                label: 'Sign up',
+                isLoading: _isLoading,
+                onPressed: () {
+                  if (!_isLoading) on_sign_up();
+                },
               ),
               const SizedBox(height: 16),
               Row(

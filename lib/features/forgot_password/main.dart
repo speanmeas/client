@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import "package:speanmeas/features/widget/widget.dart" as widget;
 
 Widget _layout(List<Widget> children) {
   return Scaffold(
@@ -23,29 +24,6 @@ Widget _layout(List<Widget> children) {
   );
 }
 
-Widget _buildTextField({
-  required String label,
-  required TextEditingController controller,
-  required TextInputAction textInputAction,
-  String? Function(String?)? validator,
-  FocusNode? focusNode,
-  Icon? prefixIcon,
-}) {
-  return TextFormField(
-    focusNode: focusNode,
-    controller: controller,
-    textInputAction: textInputAction,
-    keyboardType: TextInputType.phone,
-    decoration: InputDecoration(
-      labelText: label,
-      border: const OutlineInputBorder(),
-      prefixIcon: prefixIcon,
-    ),
-    validator: validator,
-    onFieldSubmitted: (_) => FocusScope.of(focusNode!.context!).unfocus(),
-  );
-}
-
 class Main_ extends StatefulWidget {
   const Main_({super.key});
 
@@ -55,15 +33,15 @@ class Main_ extends StatefulWidget {
 
 class _Main_State extends State<Main_> {
   final _formKey = GlobalKey<FormState>();
-  final c_phonenum = TextEditingController();
   final node_phonenum = FocusNode();
+
+  String c_phonenum = '';
 
   bool _isLoading = false;
   bool _phonenumSent = false;
 
   @override
   void dispose() {
-    c_phonenum.dispose();
     node_phonenum.dispose();
     super.dispose();
   }
@@ -71,8 +49,9 @@ class _Main_State extends State<Main_> {
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
 
+    c_phonenum = c_phonenum.trim();
     setState(() => _isLoading = true);
-    debugPrint('Sending reset link to ${c_phonenum.text.trim()}');
+    debugPrint('Sending reset link to $c_phonenum');
     setState(() {
       _isLoading = false;
       _phonenumSent = true;
@@ -107,12 +86,12 @@ class _Main_State extends State<Main_> {
             style: TextStyle(color: colorScheme.onSurfaceVariant),
           ),
           const SizedBox(height: 24),
-          _buildTextField(
-            controller: c_phonenum,
+          widget.buildTextField(
             focusNode: node_phonenum,
             textInputAction: TextInputAction.done,
             label: 'Phone number',
             prefixIcon: const Icon(Icons.phone_outlined),
+            onChanged: (value) => c_phonenum = value,
             validator: (value) {
               if (value == null || value.trim().isEmpty) {
                 return 'Enter your phone number';
@@ -122,18 +101,10 @@ class _Main_State extends State<Main_> {
             },
           ),
           const SizedBox(height: 24),
-          FilledButton(
-            onPressed: _isLoading ? null : _submit,
-            style: FilledButton.styleFrom(
-              minimumSize: const Size.fromHeight(48),
-            ),
-            child: _isLoading
-                ? const SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Text('Send reset link'),
+          widget.buildButton(
+            label: 'Send reset link',
+            isLoading: _isLoading,
+            onPressed: _submit,
           ),
         ],
       ),
@@ -157,7 +128,7 @@ class _Main_State extends State<Main_> {
         ),
         const SizedBox(height: 8),
         Text(
-          'A reset link was sent to ${c_phonenum.text.trim()}.',
+          'A reset link was sent to $c_phonenum.',
           textAlign: TextAlign.center,
           style: TextStyle(color: colorScheme.onSurfaceVariant),
         ),

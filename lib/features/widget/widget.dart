@@ -1,6 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+Widget buildButton({
+  required String label,
+  required VoidCallback onPressed,
+  bool isLoading = false,
+  Color? color,
+  Color? textColor,
+}) {
+  return FilledButton(
+    onPressed: isLoading ? null : onPressed,
+    style: FilledButton.styleFrom(
+      minimumSize: const Size.fromHeight(48),
+      padding: const EdgeInsets.symmetric(vertical: 16),
+    ),
+    child: isLoading
+        ? const SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          )
+        : Text(label, style: const TextStyle(fontSize: 16)),
+  );
+}
+
 Widget buildTextField({
   required String label,
   required TextInputAction textInputAction,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import "package:speanmeas/features/auth/main.dart" as auth;
-import 'package:speanmeas/features/widget/widget.dart' as widget;
+import "package:speanmeas/features/widget/widget.dart" as widget;
 
 Widget _layout(List<Widget> children) {
   return Scaffold(
@@ -34,10 +34,10 @@ class Main_ extends StatefulWidget {
 
 class _Main_State extends State<Main_> {
   final _formKey = GlobalKey<FormState>();
-  final node_identifier = FocusNode();
+  final node_username = FocusNode();
   final node_password = FocusNode();
 
-  String identifier = '';
+  String username = '';
   String password = '';
 
   bool _obscurePassword = true;
@@ -45,7 +45,7 @@ class _Main_State extends State<Main_> {
 
   @override
   void dispose() {
-    node_identifier.dispose();
+    node_username.dispose();
     node_password.dispose();
     super.dispose();
   }
@@ -57,7 +57,7 @@ class _Main_State extends State<Main_> {
 
     try {
       final result = await auth.AuthService.signin(
-        username: identifier.trim(),
+        username: username.trim(),
         password: password.trim(),
       );
 
@@ -97,24 +97,20 @@ class _Main_State extends State<Main_> {
               ),
               const SizedBox(height: 24),
               widget.buildTextField(
-                initialValue: identifier,
                 textInputAction: TextInputAction.next,
-                label: 'Username or phone number',
-                helperText: 'Phone number is preferred',
+                label: 'Username',
                 prefixIcon: const Icon(Icons.person_outline),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Enter your username or phone number';
+                    return 'Enter your username';
                   }
                   return null;
                 },
-                onChanged: (value) => setState(() => identifier = value),
-                focusNode: node_identifier,
+                focusNode: node_username,
                 nextFocusNode: node_password,
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 16),
               widget.buildTextField(
-                initialValue: password,
                 obscureText: _obscurePassword,
                 textInputAction: TextInputAction.done,
                 label: 'Password',
@@ -134,7 +130,6 @@ class _Main_State extends State<Main_> {
                   }
                   return null;
                 },
-                onChanged: (value) => setState(() => password = value),
                 focusNode: node_password,
               ),
               Align(
@@ -146,21 +141,10 @@ class _Main_State extends State<Main_> {
                 ),
               ),
               const SizedBox(height: 8),
-              FilledButton(
-                onPressed: _isLoading ? null : _submit,
-                style: FilledButton.styleFrom(
-                  minimumSize: const Size.fromHeight(48),
-                ),
-                child: _isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
-                    : const Text('Sign in'),
+              widget.buildButton(
+                label: 'Sign in',
+                isLoading: _isLoading,
+                onPressed: _submit,
               ),
               const SizedBox(height: 16),
               Row(
