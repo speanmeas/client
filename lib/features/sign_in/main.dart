@@ -1,29 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:speanmeas/core/theme/theme_data.dart' as theme;
 import "package:speanmeas/features/auth/main.dart" as auth;
 import "package:speanmeas/features/widget/widget.dart" as widget;
-
-Widget _layout(List<Widget> children) {
-  return Scaffold(
-    appBar: AppBar(
-      title: const Text('Sign in'),
-      centerTitle: false,
-      bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(0),
-        child: const Divider(thickness: 1, color: Colors.black),
-      ),
-    ),
-    body: LayoutBuilder(
-      builder: (context, constraints) {
-        return SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: constraints.maxHeight),
-            child: Center(child: Column(children: children)),
-          ),
-        );
-      },
-    ),
-  );
-}
 
 class Main_ extends StatefulWidget {
   const Main_({super.key});
@@ -34,10 +12,10 @@ class Main_ extends StatefulWidget {
 
 class _Main_State extends State<Main_> {
   final _formKey = GlobalKey<FormState>();
-  final node_username = FocusNode();
+  final node_identifier = FocusNode();
   final node_password = FocusNode();
 
-  String username = '';
+  String identifier = '';
   String password = '';
 
   bool _obscurePassword = true;
@@ -45,7 +23,7 @@ class _Main_State extends State<Main_> {
 
   @override
   void dispose() {
-    node_username.dispose();
+    node_identifier.dispose();
     node_password.dispose();
     super.dispose();
   }
@@ -57,7 +35,7 @@ class _Main_State extends State<Main_> {
 
     try {
       final result = await auth.AuthService.signin(
-        username: username.trim(),
+        username: identifier.trim(),
         password: password.trim(),
       );
 
@@ -83,10 +61,10 @@ class _Main_State extends State<Main_> {
 
   @override
   Widget build(BuildContext context) {
-    return _layout([
-      ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 420),
-        child: Form(
+    return widget.buildLayout(
+      title: 'Sign in',
+      children: [
+        Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -98,15 +76,16 @@ class _Main_State extends State<Main_> {
               const SizedBox(height: 24),
               widget.buildTextField(
                 textInputAction: TextInputAction.next,
-                label: 'Username',
+                label: 'Username or phone number',
                 prefixIcon: const Icon(Icons.person_outline),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Enter your username';
+                    return 'Enter your username or phone number';
                   }
                   return null;
                 },
-                focusNode: node_username,
+                onChanged: (value) => setState(() => identifier = value),
+                focusNode: node_identifier,
                 nextFocusNode: node_password,
               ),
               const SizedBox(height: 16),
@@ -130,6 +109,7 @@ class _Main_State extends State<Main_> {
                   }
                   return null;
                 },
+                onChanged: (value) => setState(() => password = value),
                 focusNode: node_password,
               ),
               Align(
@@ -174,7 +154,18 @@ class _Main_State extends State<Main_> {
             ],
           ),
         ),
-      ),
-    ]);
+      ],
+    );
   }
+}
+
+void main() {
+  runApp(
+    MaterialApp(
+      title: "Development",
+      theme: theme.data(),
+      debugShowCheckedModeBanner: false,
+      home: Main_(),
+    ),
+  );
 }
