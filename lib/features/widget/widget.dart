@@ -1,6 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+Widget buildLayout({required String title, required List<Widget> children}) {
+  return Scaffold(
+    appBar: AppBar(
+      title: Text(title),
+      centerTitle: false,
+      bottom: PreferredSize(
+        preferredSize: const Size.fromHeight(0),
+        child: const Divider(thickness: 1, color: Colors.black),
+      ),
+    ),
+    body: SafeArea(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 420),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: children,
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    ),
+  );
+}
+
 Widget buildButton({
   required String label,
   required VoidCallback onPressed,

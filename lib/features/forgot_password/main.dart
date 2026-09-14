@@ -1,29 +1,6 @@
 import 'package:flutter/material.dart';
 import "package:speanmeas/features/widget/widget.dart" as widget;
 
-Widget _layout(List<Widget> children) {
-  return Scaffold(
-    appBar: AppBar(
-      title: const Text('Reset password'),
-      centerTitle: false,
-      bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(0),
-        child: const Divider(thickness: 1, color: Colors.black),
-      ),
-    ),
-    body: LayoutBuilder(
-      builder: (context, constraints) {
-        return SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: constraints.maxHeight),
-            child: Center(child: Column(children: children)),
-          ),
-        );
-      },
-    ),
-  );
-}
-
 class Main_ extends StatefulWidget {
   const Main_({super.key});
 
@@ -60,12 +37,15 @@ class _Main_State extends State<Main_> {
 
   @override
   Widget build(BuildContext context) {
-    return _layout([
-      ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 420),
-        child: _phonenumSent ? _buildConfirmation() : _buildForm(),
-      ),
-    ]);
+    return widget.buildLayout(
+      title: 'Reset password',
+      children: [
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 420),
+          child: _phonenumSent ? _buildConfirmation() : _buildForm(),
+        ),
+      ],
+    );
   }
 
   Widget _buildForm() {
