@@ -1,59 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:speanmeas/core/theme/theme_data.dart' as theme;
 import "package:speanmeas/features/auth/main.dart" as auth;
-
-Widget _layout(List<Widget> children) {
-  return Scaffold(
-    appBar: AppBar(
-      title: const Text('Sign in'),
-      centerTitle: false,
-      bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(0),
-        child: const Divider(thickness: 1, color: Colors.black),
-      ),
-    ),
-    body: LayoutBuilder(
-      builder: (context, constraints) {
-        return SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: constraints.maxHeight),
-            child: Center(child: Column(children: children)),
-          ),
-        );
-      },
-    ),
-  );
-}
-
-Widget _buildTextField({
-  required String label,
-  required TextEditingController controller,
-  required TextInputAction textInputAction,
-  String? Function(String?)? validator,
-  FocusNode? focusNode,
-  Icon? prefixIcon,
-  Widget? suffixIcon,
-  FocusNode? nextFocusNode,
-  bool obscureText = false,
-}) {
-  return TextFormField(
-    focusNode: focusNode,
-    controller: controller,
-    obscureText: obscureText,
-    textInputAction: textInputAction,
-    decoration: InputDecoration(
-      labelText: label,
-      border: const OutlineInputBorder(),
-      prefixIcon: prefixIcon,
-      suffixIcon: suffixIcon,
-    ),
-    validator: validator,
-    onFieldSubmitted: (_) {
-      if (nextFocusNode != null && focusNode?.context != null) {
-        FocusScope.of(focusNode!.context!).requestFocus(nextFocusNode);
-      }
-    },
-  );
-}
+import "package:speanmeas/features/widget/widget.dart" as widget;
 
 class Main_ extends StatefulWidget {
   const Main_({super.key});
@@ -64,21 +12,19 @@ class Main_ extends StatefulWidget {
 
 class _Main_State extends State<Main_> {
   final _formKey = GlobalKey<FormState>();
-  final node_username = FocusNode();
+  final node_identifier = FocusNode();
   final node_password = FocusNode();
 
-  final c_username = TextEditingController();
-  final c_password = TextEditingController();
+  String identifier = '';
+  String password = '';
 
   bool _obscurePassword = true;
   bool _isLoading = false;
 
   @override
   void dispose() {
-    node_username.dispose();
+    node_identifier.dispose();
     node_password.dispose();
-    c_username.dispose();
-    c_password.dispose();
     super.dispose();
   }
 
@@ -89,8 +35,8 @@ class _Main_State extends State<Main_> {
 
     try {
       final result = await auth.AuthService.signin(
-        username: c_username.text.trim(),
-        password: c_password.text,
+        username: identifier.trim(),
+        password: password.trim(),
       );
 
       if (!mounted) return;
@@ -115,10 +61,10 @@ class _Main_State extends State<Main_> {
 
   @override
   Widget build(BuildContext context) {
-    return _layout([
-      ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 420),
-        child: Form(
+    return widget.buildLayout(
+      title: 'Sign in',
+      children: [
+        Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -128,23 +74,22 @@ class _Main_State extends State<Main_> {
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 24),
-              _buildTextField(
-                controller: c_username,
+              widget.buildTextField(
                 textInputAction: TextInputAction.next,
-                label: 'Username',
+                label: 'Username or phone number',
                 prefixIcon: const Icon(Icons.person_outline),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Enter your username';
+                    return 'Enter your username or phone number';
                   }
                   return null;
                 },
-                focusNode: node_username,
+                onChanged: (value) => setState(() => identifier = value),
+                focusNode: node_identifier,
                 nextFocusNode: node_password,
               ),
               const SizedBox(height: 16),
-              _buildTextField(
-                controller: c_password,
+              widget.buildTextField(
                 obscureText: _obscurePassword,
                 textInputAction: TextInputAction.done,
                 label: 'Password',
@@ -164,6 +109,7 @@ class _Main_State extends State<Main_> {
                   }
                   return null;
                 },
+                onChanged: (value) => setState(() => password = value),
                 focusNode: node_password,
               ),
               Align(
@@ -175,21 +121,10 @@ class _Main_State extends State<Main_> {
                 ),
               ),
               const SizedBox(height: 8),
-              FilledButton(
-                onPressed: _isLoading ? null : _submit,
-                style: FilledButton.styleFrom(
-                  minimumSize: const Size.fromHeight(48),
-                ),
-                child: _isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
-                    : const Text('Sign in'),
+              widget.buildButton(
+                label: 'Sign in',
+                isLoading: _isLoading,
+                onPressed: _submit,
               ),
               const SizedBox(height: 16),
               Row(
@@ -219,7 +154,18 @@ class _Main_State extends State<Main_> {
             ],
           ),
         ),
-      ),
-    ]);
+      ],
+    );
   }
+}
+
+void main() {
+  runApp(
+    MaterialApp(
+      title: "Development",
+      theme: theme.data(),
+      debugShowCheckedModeBanner: false,
+      home: Main_(),
+    ),
+  );
 }
