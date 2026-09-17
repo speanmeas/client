@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:speanmeas/core/theme/theme_data.dart' as theme;
 import "package:speanmeas/features/widget/widget.dart" as widget;
-
-class Main_ extends StatefulWidget {
-  const Main_({super.key});
-
-  @override
-  State<Main_> createState() => _Main_State();
-}
 
 class _Main_State extends State<Main_> {
   final _formKey = GlobalKey<FormState>();
+
   final node_phonenum = FocusNode();
 
   String c_phonenum = '';
@@ -17,22 +12,8 @@ class _Main_State extends State<Main_> {
   bool _isLoading = false;
   bool _phonenumSent = false;
 
-  @override
-  void dispose() {
-    node_phonenum.dispose();
-    super.dispose();
-  }
-
-  void _submit() {
-    if (!_formKey.currentState!.validate()) return;
-
-    c_phonenum = c_phonenum.trim();
-    setState(() => _isLoading = true);
-    debugPrint('Sending reset link to $c_phonenum');
-    setState(() {
-      _isLoading = false;
-      _phonenumSent = true;
-    });
+  void init() {
+    //
   }
 
   @override
@@ -71,7 +52,7 @@ class _Main_State extends State<Main_> {
             textInputAction: TextInputAction.done,
             label: 'Phone number',
             prefixIcon: const Icon(Icons.phone_outlined),
-            onChanged: (value) => c_phonenum = value,
+            onChanged: (value) => setState(() => c_phonenum = value),
             validator: (value) {
               if (value == null || value.trim().isEmpty) {
                 return 'Enter your phone number';
@@ -84,7 +65,9 @@ class _Main_State extends State<Main_> {
           widget.buildButton(
             label: 'Send reset link',
             isLoading: _isLoading,
-            onPressed: _submit,
+            onPressed: () {
+              if (!_isLoading) on_forgot_password();
+            },
           ),
         ],
       ),
@@ -121,4 +104,70 @@ class _Main_State extends State<Main_> {
       ],
     );
   }
+
+  void on_forgot_password() async {
+    if (_formKey.currentState!.validate()) {
+      c_phonenum = c_phonenum.trim();
+      setState(() {
+        _isLoading = true;
+      });
+
+      try {
+        debugPrint('Sending reset link to $c_phonenum');
+
+        if (!mounted) return;
+
+        setState(() {
+          _phonenumSent = true;
+        });
+      } catch (e) {
+        if (!mounted) return;
+
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: ${_friendlyError(e)}')));
+      } finally {
+        if (!mounted) return;
+
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  String _friendlyError(Object e) {
+    return e.toString();
+  }
+
+  @override
+  void dispose() {
+    node_phonenum.dispose();
+    super.dispose();
+  }
+
+  // Initialize the state
+  @override
+  void initState() {
+    super.initState();
+    init();
+  }
+}
+
+class Main_ extends StatefulWidget {
+  const Main_({super.key});
+
+  @override
+  State<Main_> createState() => _Main_State();
+}
+
+void main() {
+  runApp(
+    MaterialApp(
+      title: "Development",
+      theme: theme.data(),
+      debugShowCheckedModeBanner: false,
+      home: Main_(),
+    ),
+  );
 }
