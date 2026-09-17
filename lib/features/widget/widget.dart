@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+// *Layout widget
 Widget buildLayout({required String title, required List<Widget> children}) {
   return Scaffold(
     appBar: AppBar(
@@ -36,6 +37,7 @@ Widget buildLayout({required String title, required List<Widget> children}) {
   );
 }
 
+// *Button widget
 Widget buildButton({
   required String label,
   required VoidCallback onPressed,
@@ -59,6 +61,7 @@ Widget buildButton({
   );
 }
 
+// *TextField widget
 Widget buildTextField({
   required String label,
   required TextInputAction textInputAction,
