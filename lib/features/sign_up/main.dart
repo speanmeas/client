@@ -25,6 +25,7 @@ class _UsernameInputFormatter extends TextInputFormatter {
 }
 
 class _Main_State extends State<Main_> {
+  // ########## BLOCK ATTRIBUTE ##########
   final _formKey = GlobalKey<FormState>();
 
   final node_firstName = FocusNode();
@@ -44,227 +45,225 @@ class _Main_State extends State<Main_> {
   bool _isLoading = false;
   bool _obscurePassword = true;
   bool _usernameManuallyEdited = false;
+  int _usernameRevision = 0;
+  // ########## BLOCK ATTRIBUTE END ##########
 
-  String get _suggestedUsername {
-    final first = (firstName ?? '').trim().toLowerCase().replaceAll("'", '_');
-    final last = (lastName ?? '').trim().toLowerCase().replaceAll("'", '_');
-    return '$first$last';
-  }
-
-  void init() {
-    //
-  }
-
-  void _onNameChanged() {
-    if (_usernameManuallyEdited) return;
-    username = _suggestedUsername;
-  }
-
+  // ########## BLOCK DESIGN ##########
   @override
   Widget build(BuildContext context) {
     return widget.buildLayout(
       title: 'Create an account',
       children: [
-        ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 420),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const Text(
-                  'Please fill in your information',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: 24),
-                widget.buildTextField(
-                  focusNode: node_firstName,
-                  initialValue: firstName,
-                  textInputAction: TextInputAction.next,
-                  label: 'First name',
-                  prefixIcon: Icon(Icons.person_outline),
-                  validator: (value) {
-                    final name = value?.trim() ?? '';
-                    if (name.isEmpty) {
-                      return 'Enter your first name';
-                    }
-                    if (!RegExp(r"^[A-Za-z']+$").hasMatch(name)) {
-                      return 'Letters only';
-                    }
-                    return null;
-                  },
-                  onChanged: (value) {
-                    setState(() {
-                      firstName = value;
-                      _onNameChanged();
-                    });
-                  },
-                  nextFocusNode: node_lastName,
-                ),
-                const SizedBox(height: 16),
-                widget.buildTextField(
-                  focusNode: node_lastName,
-                  initialValue: lastName,
-                  textInputAction: TextInputAction.next,
-                  label: 'Last name',
-                  prefixIcon: Icon(Icons.person_outline),
-                  validator: (value) {
-                    final name = value?.trim() ?? '';
-                    if (name.isEmpty) {
-                      return 'Enter your last name';
-                    }
-                    if (!RegExp(r"^[A-Za-z']+$").hasMatch(name)) {
-                      return 'Letters only';
-                    }
-                    return null;
-                  },
-                  onChanged: (value) {
-                    setState(() {
-                      lastName = value;
-                      _onNameChanged();
-                    });
-                  },
-                  nextFocusNode: node_username,
-                ),
-                const SizedBox(height: 16),
-                widget.buildTextField(
-                  fieldKey: ValueKey(
-                    _usernameManuallyEdited ? 'username-manual' : username,
+        Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text(
+                'Please fill in your information',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 24),
+              widget.buildTextField(
+                focusNode: node_firstName,
+                initialValue: firstName,
+                textInputAction: TextInputAction.next,
+                label: 'First name',
+                prefixIcon: Icon(Icons.person_outline),
+                validator: (value) {
+                  final name = value?.trim() ?? '';
+                  if (name.isEmpty) {
+                    return 'Enter your first name';
+                  }
+                  if (!RegExp(r"^[A-Za-z']+$").hasMatch(name)) {
+                    return 'Letters only';
+                  }
+                  return null;
+                },
+                onChanged: (value) {
+                  setState(() {
+                    firstName = value;
+                    _onNameChanged();
+                  });
+                },
+                nextFocusNode: node_lastName,
+              ),
+              const SizedBox(height: 16),
+              widget.buildTextField(
+                focusNode: node_lastName,
+                initialValue: lastName,
+                textInputAction: TextInputAction.next,
+                label: 'Last name',
+                prefixIcon: Icon(Icons.person_outline),
+                validator: (value) {
+                  final name = value?.trim() ?? '';
+                  if (name.isEmpty) {
+                    return 'Enter your last name';
+                  }
+                  if (!RegExp(r"^[A-Za-z']+$").hasMatch(name)) {
+                    return 'Letters only';
+                  }
+                  return null;
+                },
+                onChanged: (value) {
+                  setState(() {
+                    lastName = value;
+                    _onNameChanged();
+                  });
+                },
+                nextFocusNode: node_username,
+              ),
+              const SizedBox(height: 16),
+              widget.buildTextField(
+                fieldKey: ValueKey('username-$_usernameRevision'),
+                focusNode: node_username,
+                initialValue: username,
+                textInputAction: TextInputAction.next,
+                label: 'Username',
+                prefixIcon: Icon(Icons.person_outline),
+                inputFormatters: [_UsernameInputFormatter()],
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Enter a username';
+                  }
+                  return null;
+                },
+                onChanged: (value) {
+                  setState(() {
+                    username = value;
+                    _usernameManuallyEdited = true;
+                  });
+                },
+                nextFocusNode: node_phone,
+              ),
+              const SizedBox(height: 16),
+              widget.buildTextField(
+                focusNode: node_phone,
+                initialValue: phone,
+                textInputAction: TextInputAction.next,
+                label: 'Phone number',
+                prefixIcon: Icon(Icons.phone_outlined),
+                validator: (value) {
+                  final p = value?.trim() ?? '';
+                  if (p.isEmpty) {
+                    return 'Enter your phone number';
+                  }
+                  if (!RegExp(r'^[0-9]+$').hasMatch(p)) {
+                    return 'Digits only';
+                  }
+                  if (p.length < 8) {
+                    return 'Must be at least 8 digits';
+                  }
+                  if (!p.startsWith('0')) {
+                    return 'Must start with 0';
+                  }
+                  return null;
+                },
+                onChanged: (value) => setState(() => phone = value),
+                nextFocusNode: node_password,
+              ),
+              const SizedBox(height: 16),
+              widget.buildTextField(
+                focusNode: node_password,
+                initialValue: password,
+                obscureText: _obscurePassword,
+                textInputAction: TextInputAction.next,
+                label: 'Password',
+                prefixIcon: Icon(Icons.lock_outline),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscurePassword
+                        ? Icons.visibility_outlined
+                        : Icons.visibility_off_outlined,
                   ),
-                  focusNode: node_username,
-                  initialValue: username,
-                  textInputAction: TextInputAction.next,
-                  label: 'Username',
-                  prefixIcon: Icon(Icons.person_outline),
-                  inputFormatters: [_UsernameInputFormatter()],
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Enter a username';
-                    }
-                    return null;
-                  },
-                  onChanged: (value) {
-                    setState(() {
-                      username = value;
-                      _usernameManuallyEdited = true;
-                    });
-                  },
-                  nextFocusNode: node_phone,
-                ),
-                const SizedBox(height: 16),
-                widget.buildTextField(
-                  focusNode: node_phone,
-                  initialValue: phone,
-                  textInputAction: TextInputAction.next,
-                  label: 'Phone number',
-                  prefixIcon: Icon(Icons.phone_outlined),
-                  validator: (value) {
-                    final p = value?.trim() ?? '';
-                    if (p.isEmpty) {
-                      return 'Enter your phone number';
-                    }
-                    if (!RegExp(r'^[0-9]+$').hasMatch(p)) {
-                      return 'Digits only';
-                    }
-                    if (p.length < 8) {
-                      return 'Must be at least 8 digits';
-                    }
-                    if (!p.startsWith('0')) {
-                      return 'Must start with 0';
-                    }
-                    return null;
-                  },
-                  onChanged: (value) => setState(() => phone = value),
-                  nextFocusNode: node_password,
-                ),
-                const SizedBox(height: 16),
-                widget.buildTextField(
-                  focusNode: node_password,
-                  initialValue: password,
-                  obscureText: _obscurePassword,
-                  textInputAction: TextInputAction.next,
-                  label: 'Password',
-                  prefixIcon: Icon(Icons.lock_outline),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscurePassword
-                          ? Icons.visibility_outlined
-                          : Icons.visibility_off_outlined,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _obscurePassword = !_obscurePassword;
-                      });
-                    },
-                  ),
-                  validator: (value) {
-                    if (value == null || value.length < 8) {
-                      return 'Password must be at least 8 characters';
-                    }
-                    return null;
-                  },
-                  onChanged: (value) => setState(() => password = value),
-                  nextFocusNode: node_confirm,
-                ),
-                const SizedBox(height: 16),
-                widget.buildTextField(
-                  focusNode: node_confirm,
-                  initialValue: confirmPassword,
-                  obscureText: true,
-                  textInputAction: TextInputAction.done,
-                  label: 'Confirm password',
-                  prefixIcon: Icon(Icons.lock_outline),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Confirm your password';
-                    }
-                    if (value != password) {
-                      return 'Passwords do not match';
-                    }
-                    return null;
-                  },
-                  onChanged: (value) => setState(() => confirmPassword = value),
-                ),
-
-                const SizedBox(height: 24),
-                widget.buildButton(
-                  label: 'Sign up',
-                  isLoading: _isLoading,
                   onPressed: () {
-                    if (!_isLoading) on_sign_up();
+                    setState(() {
+                      _obscurePassword = !_obscurePassword;
+                    });
                   },
                 ),
-                const SizedBox(height: 16),
-                Row(
-                  children: const [
-                    Expanded(child: Divider()),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8),
-                      child: Text('or'),
-                    ),
-                    Expanded(child: Divider()),
-                  ],
-                ),
+                validator: (value) {
+                  if (value == null || value.length < 8) {
+                    return 'Password must be at least 8 characters';
+                  }
+                  return null;
+                },
+                onChanged: (value) => setState(() => password = value),
+                nextFocusNode: node_confirm,
+              ),
+              const SizedBox(height: 16),
+              widget.buildTextField(
+                focusNode: node_confirm,
+                initialValue: confirmPassword,
+                obscureText: true,
+                textInputAction: TextInputAction.done,
+                label: 'Confirm password',
+                prefixIcon: Icon(Icons.lock_outline),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Confirm your password';
+                  }
+                  if (value != password) {
+                    return 'Passwords do not match';
+                  }
+                  return null;
+                },
+                onChanged: (value) => setState(() => confirmPassword = value),
+              ),
 
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text('Already have an account?'),
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (context) => signin.Main_()),
-                      ),
-                      child: const Text('Sign in'),
+              const SizedBox(height: 24),
+              widget.buildButton(
+                label: 'Sign up',
+                isLoading: _isLoading,
+                onPressed: () {
+                  if (!_isLoading) on_sign_up();
+                },
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: const [
+                  Expanded(child: Divider()),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8),
+                    child: Text('or'),
+                  ),
+                  Expanded(child: Divider()),
+                ],
+              ),
+
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Already have an account?'),
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (context) => signin.Main_()),
                     ),
-                  ],
-                ),
-              ],
-            ),
+                    child: const Text('Sign in'),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ],
     );
+  }
+  // ########## BLOCK DESIGN END ##########
+
+  // ########## BLOCK METHODS ##########
+  String get _suggestedUsername {
+    final first = (firstName ?? '').trim().toLowerCase().replaceAll("'", '_');
+    final last = (lastName ?? '').trim().toLowerCase().replaceAll("'", '_');
+    final full = '$first' + '_' + '$last';
+    return full;
+  }
+
+  void _onNameChanged() {
+    if (_usernameManuallyEdited) return;
+    username = _suggestedUsername;
+    _usernameRevision++;
   }
 
   void on_sign_up() async {
@@ -287,7 +286,7 @@ class _Main_State extends State<Main_> {
 
         if (!mounted) return;
 
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => signin.Main_()),
         );
@@ -298,11 +297,11 @@ class _Main_State extends State<Main_> {
           context,
         ).showSnackBar(SnackBar(content: Text('Error: ${_friendlyError(e)}')));
       } finally {
-        if (!mounted) return;
-
-        setState(() {
-          _isLoading = false;
-        });
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
       }
     }
   }
@@ -311,10 +310,15 @@ class _Main_State extends State<Main_> {
     if (e is DioException) {
       final data = e.response?.data;
       if (data is String && data.trim().isNotEmpty) return data;
-      if (data is Map && data['detail'] != null)
+      if (data is Map && data['detail'] != null) {
         return data['detail'].toString();
+      }
     }
     return e.toString();
+  }
+
+  void init() {
+    //
   }
 
   @override
@@ -328,12 +332,12 @@ class _Main_State extends State<Main_> {
     super.dispose();
   }
 
-  // Initialize the state
   @override
   void initState() {
     super.initState();
     init();
   }
+  // ########## BLOCK METHODS END ##########
 }
 
 class Main_ extends StatefulWidget {

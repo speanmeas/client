@@ -3,15 +3,10 @@ import 'package:speanmeas/core/theme/theme_data.dart' as theme;
 import "package:speanmeas/features/auth/main.dart" as auth;
 import "package:speanmeas/features/widget/widget.dart" as widget;
 
-class Main_ extends StatefulWidget {
-  const Main_({super.key});
-
-  @override
-  State<Main_> createState() => _Main_State();
-}
-
 class _Main_State extends State<Main_> {
+  // ########## BLOCK ATTRIBUTE ##########
   final _formKey = GlobalKey<FormState>();
+
   final node_identifier = FocusNode();
   final node_password = FocusNode();
 
@@ -20,45 +15,9 @@ class _Main_State extends State<Main_> {
 
   bool _obscurePassword = true;
   bool _isLoading = false;
+  // ########## BLOCK ATTRIBUTE END ##########
 
-  @override
-  void dispose() {
-    node_identifier.dispose();
-    node_password.dispose();
-    super.dispose();
-  }
-
-  Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) return;
-
-    setState(() => _isLoading = true);
-
-    try {
-      final result = await auth.AuthService.signin(
-        username: identifier.trim(),
-        password: password.trim(),
-      );
-
-      if (!mounted) return;
-
-      debugPrint('Sign in success: $result');
-
-      Navigator.of(context).pushReplacementNamed('/application');
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(_friendlyError(e))));
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
-
-  String _friendlyError(Object e) {
-    final msg = e.toString().replaceFirst('Exception: ', '');
-    return msg.isEmpty ? 'Sign in failed. Please try again.' : msg;
-  }
-
+  // ########## BLOCK DESIGN ##########
   @override
   Widget build(BuildContext context) {
     return widget.buildLayout(
@@ -124,7 +83,9 @@ class _Main_State extends State<Main_> {
               widget.buildButton(
                 label: 'Sign in',
                 isLoading: _isLoading,
-                onPressed: _submit,
+                onPressed: () {
+                  if (!_isLoading) on_sign_in();
+                },
               ),
               const SizedBox(height: 16),
               Row(
@@ -138,8 +99,6 @@ class _Main_State extends State<Main_> {
                 ],
               ),
               const SizedBox(height: 16),
-
-              const SizedBox(height: 24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -157,6 +116,71 @@ class _Main_State extends State<Main_> {
       ],
     );
   }
+  // ########## BLOCK DESIGN END ##########
+
+  // ########## BLOCK METHODS ##########
+  void on_sign_in() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      try {
+        final result = await auth.AuthService.signin(
+          username: identifier.trim(),
+          password: password.trim(),
+        );
+
+        if (!mounted) return;
+
+        debugPrint('Sign in success: $result');
+
+        Navigator.of(context).pushReplacementNamed('/application');
+      } catch (e) {
+        if (!mounted) return;
+
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(_friendlyError(e))));
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
+    }
+  }
+
+  String _friendlyError(Object e) {
+    final msg = e.toString().replaceFirst('Exception: ', '');
+    return msg.isEmpty ? 'Sign in failed. Please try again.' : msg;
+  }
+
+  void init() {
+    //
+  }
+
+  @override
+  void dispose() {
+    node_identifier.dispose();
+    node_password.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    init();
+  }
+  // ########## BLOCK METHODS END ##########
+}
+
+class Main_ extends StatefulWidget {
+  const Main_({super.key});
+
+  @override
+  State<Main_> createState() => _Main_State();
 }
 
 void main() {

@@ -3,19 +3,18 @@ import 'package:speanmeas/core/theme/theme_data.dart' as theme;
 import "package:speanmeas/features/widget/widget.dart" as widget;
 
 class _Main_State extends State<Main_> {
+  // ########## BLOCK ATTRIBUTE ##########
   final _formKey = GlobalKey<FormState>();
 
-  final node_phonenum = FocusNode();
+  final node_phone = FocusNode();
 
-  String c_phonenum = '';
+  String phone = '';
 
   bool _isLoading = false;
-  bool _phonenumSent = false;
+  bool _phoneSent = false;
+  // ########## BLOCK ATTRIBUTE END ##########
 
-  void init() {
-    //
-  }
-
+  // ########## BLOCK DESIGN ##########
   @override
   Widget build(BuildContext context) {
     return widget.buildLayout(
@@ -23,7 +22,7 @@ class _Main_State extends State<Main_> {
       children: [
         ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 420),
-          child: _phonenumSent ? _buildConfirmation() : _buildForm(),
+          child: _phoneSent ? _buildConfirmation() : _buildForm(),
         ),
       ],
     );
@@ -48,11 +47,11 @@ class _Main_State extends State<Main_> {
           ),
           const SizedBox(height: 24),
           widget.buildTextField(
-            focusNode: node_phonenum,
+            focusNode: node_phone,
             textInputAction: TextInputAction.done,
             label: 'Phone number',
             prefixIcon: const Icon(Icons.phone_outlined),
-            onChanged: (value) => setState(() => c_phonenum = value),
+            onChanged: (value) => setState(() => phone = value),
             validator: (value) {
               if (value == null || value.trim().isEmpty) {
                 return 'Enter your phone number';
@@ -91,7 +90,7 @@ class _Main_State extends State<Main_> {
         ),
         const SizedBox(height: 8),
         Text(
-          'A reset link was sent to $c_phonenum.',
+          'A reset link was sent to $phone.',
           textAlign: TextAlign.center,
           style: TextStyle(color: colorScheme.onSurfaceVariant),
         ),
@@ -104,21 +103,23 @@ class _Main_State extends State<Main_> {
       ],
     );
   }
+  // ########## BLOCK DESIGN END ##########
 
+  // ########## BLOCK METHODS ##########
   void on_forgot_password() async {
     if (_formKey.currentState!.validate()) {
-      c_phonenum = c_phonenum.trim();
+      phone = phone.trim();
       setState(() {
         _isLoading = true;
       });
 
       try {
-        debugPrint('Sending reset link to $c_phonenum');
+        debugPrint('Sending reset link to $phone');
 
         if (!mounted) return;
 
         setState(() {
-          _phonenumSent = true;
+          _phoneSent = true;
         });
       } catch (e) {
         if (!mounted) return;
@@ -127,11 +128,11 @@ class _Main_State extends State<Main_> {
           context,
         ).showSnackBar(SnackBar(content: Text('Error: ${_friendlyError(e)}')));
       } finally {
-        if (!mounted) return;
-
-        setState(() {
-          _isLoading = false;
-        });
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
       }
     }
   }
@@ -140,18 +141,22 @@ class _Main_State extends State<Main_> {
     return e.toString();
   }
 
+  void init() {
+    //
+  }
+
   @override
   void dispose() {
-    node_phonenum.dispose();
+    node_phone.dispose();
     super.dispose();
   }
 
-  // Initialize the state
   @override
   void initState() {
     super.initState();
     init();
   }
+  // ########## BLOCK METHODS END ##########
 }
 
 class Main_ extends StatefulWidget {
