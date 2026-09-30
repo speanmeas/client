@@ -4,7 +4,6 @@ import 'package:speanmeas/core/theme/theme_data.dart' as theme;
 import 'package:speanmeas/core/utility/dio.dart';
 import 'package:dio/dio.dart';
 import 'package:speanmeas/features/application/main.dart' as app;
-import 'package:speanmeas/core/endpoint.g.dart' as ep;
 
 Widget _layout(List<Widget> children) {
   return Scaffold(
@@ -32,7 +31,7 @@ class _Main_State extends State<Main_> {
   ///
   /// Variables
   ///
-  String? telegramToken;
+  String? googleToken;
   bool isLoading = false;
   String? errorMessage;
 
@@ -44,11 +43,11 @@ class _Main_State extends State<Main_> {
         uri.queryParameters['user_id'];
     if (token != null) {
       setState(() {
-        telegramToken = token;
+        googleToken = token;
         isLoading = true;
         errorMessage = null;
       });
-      on_telegram_token_received(token);
+      on_google_token_received(token);
     }
   }
 
@@ -60,7 +59,7 @@ class _Main_State extends State<Main_> {
         SizedBox(height: 20),
         CircularProgressIndicator(),
         SizedBox(height: 20),
-        Text('Logging in with Telegram...'),
+        Text('Logging in with Google...'),
       ],
       if (errorMessage != null) ...[
         SizedBox(height: 20),
@@ -68,10 +67,10 @@ class _Main_State extends State<Main_> {
         SizedBox(height: 20),
       ],
       OutlinedButton(
-        child: Text('Auth Telegram'),
+        child: Text('Auth Google'),
         onPressed: () async {
           try {
-            final url = Uri.parse('https://trychansak.1riel.com/telegram_auth');
+            final url = Uri.parse('https://trychansak.1riel.com/google_auth');
             if (await canLaunchUrl(url)) {
               await launchUrl(url, mode: LaunchMode.externalApplication);
             } else {
@@ -85,20 +84,12 @@ class _Main_State extends State<Main_> {
     ]);
   }
 
-  void on_telegram_token_received(String token) async {
+  void on_google_token_received(String token) async {
     try {
-      dynamic tmp;
-      try {
-        tmp = await dio.get(
-          '/telegram_auth',
-          options: Options(headers: {'Authorization': 'Bearer $token'}),
-        );
-      } catch (_) {
-        tmp = await dio.get(
-          ep.endpoint.AUTH_CLIENT_TRYCHANSAK_TELEGRAM,
-          options: Options(headers: {'Authorization': 'Bearer $token'}),
-        );
-      }
+      var tmp = await dio.get(
+        '/google_auth',
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
 
       debugPrint(tmp.toString());
 
@@ -108,11 +99,11 @@ class _Main_State extends State<Main_> {
         MaterialPageRoute(builder: (context) => app.Main_()),
       );
     } catch (e) {
-      debugPrint("Telegram sign in failed: $e");
+      debugPrint("Google sign in failed: $e");
       if (!mounted) return;
       setState(() {
         isLoading = false;
-        errorMessage = 'Telegram sign in failed';
+        errorMessage = 'Google sign in failed';
       });
     }
   }
